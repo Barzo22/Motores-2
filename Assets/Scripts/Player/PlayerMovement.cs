@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     bool isMoving = false;
     Vector2 moveDirection;
 
+    public static event System.Action OnPlayerMoved;
+
     void Update()
     {
         if (isMoving)
@@ -58,12 +60,16 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    bool eventFired = false;
+
     void StartMoving(Vector2 direction)
     {
-        if (isMoving) return; 
+        if (isMoving) return;
         moveDirection = direction;
         isMoving = true;
+        eventFired = false;
     }
+
     void MoveUntilWall()
     {
         float playerHalfSize = 0.5f;
@@ -71,18 +77,25 @@ public class PlayerMovement : MonoBehaviour
 
         if (hit.collider != null)
         {
-            float distanceToWall = hit.distance - playerHalfSize;
-
-            if (distanceToWall > 0)
-            {
-                transform.Translate(moveDirection * distanceToWall);
-            }
-
+            float moveDistance = Mathf.Max(0f, hit.distance - playerHalfSize);
+            transform.position = (Vector2)transform.position + moveDirection * moveDistance;
             isMoving = false;
+
+            if (moveDistance > 0.01f && !eventFired)
+            {
+                eventFired = true;
+                OnPlayerMoved?.Invoke();
+            }
         }
         else
         {
             transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+
+            if (!eventFired)
+            {
+                eventFired = true;
+                OnPlayerMoved?.Invoke();
+            }
         }
     }
 }

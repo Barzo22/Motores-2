@@ -15,8 +15,8 @@ public class Spikes : MonoBehaviour
     {
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
         timer = timeOffset;
+        isActive = true; 
         SetActive(true);
     }
 
