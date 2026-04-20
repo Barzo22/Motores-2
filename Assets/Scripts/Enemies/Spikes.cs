@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class Spikes : MonoBehaviour
 {
-    [SerializeField] float activeTime = 1f;    
-    [SerializeField] float inactiveTime = 1f;  
-    [SerializeField] float timeOffset = 0f;  
+    [SerializeField] float activeTime = 1f;
+    [SerializeField] float inactiveTime = 1f;
+    [SerializeField] float timeOffset = 0f;
+    [SerializeField] Color activeColor = Color.white;
 
     Collider2D col;
     SpriteRenderer spriteRenderer;
@@ -16,14 +17,13 @@ public class Spikes : MonoBehaviour
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         timer = timeOffset;
-        isActive = true; 
+        isActive = true;
         SetActive(true);
     }
 
     void Update()
     {
         timer -= Time.deltaTime;
-
         if (timer <= 0)
         {
             isActive = !isActive;
@@ -35,15 +35,12 @@ public class Spikes : MonoBehaviour
     void SetActive(bool active)
     {
         col.enabled = active;
-
-        spriteRenderer.color = active ? Color.white : new Color(1, 1, 1, 0.3f);
+        spriteRenderer.color = active ? activeColor : new Color(activeColor.r, activeColor.g, activeColor.b, 0.3f);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
-        {
             GameManager.Instance.PlayerDied();
-        }
     }
 }
