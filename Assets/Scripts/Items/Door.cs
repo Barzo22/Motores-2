@@ -3,7 +3,7 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     [SerializeField] string requiredKeyID = "key_1";
-    [SerializeField] float checkRadius = 1.5f;
+    [SerializeField] float checkRadius = 5f;
 
     Transform player;
 
