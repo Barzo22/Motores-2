@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     public void PlayerDied()
     {
         currentLives--;
+        collectedKeys.Clear();
 
         if (currentLives <= 0)
             SceneManager.LoadScene("GameOver");
