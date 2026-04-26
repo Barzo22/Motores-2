@@ -5,12 +5,17 @@ public class TurnEnemy : MonoBehaviour
 {
     [SerializeField] Transform[] waypoints;
     [SerializeField] bool loop = true;
-    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float enemySpeed = 5f;
 
     int currentWaypoint = 0;
     bool movingForward = true;
     bool isMoving = false;
-
+  void Start()
+    {
+        enemySpeed = RemoteConfigManager.Instance != null
+            ? RemoteConfigManager.Instance.EnemySpeed
+            : enemySpeed;
+    }
     void OnEnable()
     {
         PlayerMovement.OnPlayerMoved += MoveToNextWaypoint;
@@ -34,7 +39,7 @@ public class TurnEnemy : MonoBehaviour
 
         while (Vector2.Distance(transform.position, target) > 0.01f)
         {
-            transform.position = Vector2.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, target, enemySpeed * Time.deltaTime);
             yield return null;
         }
 

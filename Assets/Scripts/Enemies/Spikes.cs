@@ -35,7 +35,7 @@ public class Spikes : MonoBehaviour
     void SetActive(bool active)
     {
         col.enabled = active;
-        spriteRenderer.color = active ? activeColor : new Color(activeColor.r, activeColor.g, activeColor.b, 0.3f);
+        spriteRenderer.color = active ? activeColor : new Color(1,1, 1, 0);
     }
 
     void OnTriggerEnter2D(Collider2D other)

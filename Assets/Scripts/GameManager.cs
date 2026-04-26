@@ -6,11 +6,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    int coins = 0;
+    float coins = 0;
     HashSet<string> collectedKeys = new HashSet<string>();
 
     [SerializeField] int maxLives = 3;
-    int currentLives;
+    public int currentLives;
 
     void Awake()
     {
@@ -26,15 +26,18 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        maxLives = RemoteConfigManager.Instance != null
+            ? RemoteConfigManager.Instance.MaxLives
+            : maxLives;
         currentLives = maxLives;
     }
 
-    public void AddCoins(int amount)
+    public void AddCoins(float amount)
     {
         coins += amount;
     }
 
-    public int GetCoins() => coins;
+    public float GetCoins() => coins;
 
     public void CollectKey(string keyID) => collectedKeys.Add(keyID);
     public bool HasKey(string keyID) => collectedKeys.Contains(keyID);
@@ -45,6 +48,7 @@ public class GameManager : MonoBehaviour
     public void PlayerDied()
     {
         currentLives--;
+        coins = 0;
         collectedKeys.Clear();
 
         if (currentLives <= 0)
@@ -58,9 +62,11 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Victory");
     }
 
-    // Menú
     public void OnPlayButton()
     {
+        maxLives = RemoteConfigManager.Instance != null
+       ? RemoteConfigManager.Instance.MaxLives
+       : maxLives;
         currentLives = maxLives;
         coins = 0;
         collectedKeys.Clear();

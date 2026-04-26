@@ -1,7 +1,7 @@
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float moveSpeed = 10f;
     [SerializeField] float threshold = 100f;
     [SerializeField] float deadZone = 0.2f;
     [SerializeField] LayerMask wallLayer;
@@ -13,7 +13,20 @@ public class PlayerMovement : MonoBehaviour
     Vector2 moveDirection;
 
     public static event System.Action OnPlayerMoved;
+    void Start()
+    {
+        moveSpeed = RemoteConfigManager.Instance != null
+            ? RemoteConfigManager.Instance.MoveSpeed
+            : moveSpeed;
+        RemoteConfigManager.OnConfigLoaded += ApplyRemoteConfig;
+    }
 
+    void ApplyRemoteConfig()
+    {
+        moveSpeed = RemoteConfigManager.Instance.MoveSpeed;
+        Debug.Log($"MoveSpeed aplicado: {moveSpeed}");
+        RemoteConfigManager.OnConfigLoaded -= ApplyRemoteConfig;
+    }
     void Update()
     {
         if (isMoving)
