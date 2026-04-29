@@ -59,7 +59,17 @@ public class GameManager : MonoBehaviour
 
     public void LevelComplete()
     {
-        SceneManager.LoadScene("Victory");
+        PlayerPrefs.SetInt("LastLevel", SceneManager.GetActiveScene().buildIndex);  
+        SceneManager.LoadScene("LevelComplete");
+    }
+
+    public void OnNextLevelButton()
+    {
+        int nextLevel = PlayerPrefs.GetInt("LastLevel", 2) + 1;
+        currentLives = maxLives;
+        coins = 0;
+        collectedKeys.Clear();  
+        SceneManager.LoadScene(nextLevel);    
     }
 
     public void OnPlayButton()
