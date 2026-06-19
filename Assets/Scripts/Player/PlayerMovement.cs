@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 10f;
@@ -13,20 +14,26 @@ public class PlayerMovement : MonoBehaviour
     Vector2 moveDirection;
 
     public static event System.Action OnPlayerMoved;
+
     void Start()
     {
-        moveSpeed = RemoteConfigManager.Instance != null
-            ? RemoteConfigManager.Instance.MoveSpeed
-            : moveSpeed;
+        if (RemoteConfigManager.Instance != null)
+            moveSpeed = RemoteConfigManager.Instance.MoveSpeed;
+
         RemoteConfigManager.OnConfigLoaded += ApplyRemoteConfig;
+    }
+
+    void OnDestroy()
+    {
+        RemoteConfigManager.OnConfigLoaded -= ApplyRemoteConfig;
     }
 
     void ApplyRemoteConfig()
     {
         moveSpeed = RemoteConfigManager.Instance.MoveSpeed;
-        Debug.Log($"MoveSpeed aplicado: {moveSpeed}");
         RemoteConfigManager.OnConfigLoaded -= ApplyRemoteConfig;
     }
+
     void Update()
     {
         if (isMoving)

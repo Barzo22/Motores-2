@@ -10,12 +10,26 @@ public class TurnEnemy : MonoBehaviour
     int currentWaypoint = 0;
     bool movingForward = true;
     bool isMoving = false;
-  void Start()
+
+    void Start()
     {
-        enemySpeed = RemoteConfigManager.Instance != null
-            ? RemoteConfigManager.Instance.EnemySpeed
-            : enemySpeed;
+        if (RemoteConfigManager.Instance != null)
+            enemySpeed = RemoteConfigManager.Instance.EnemySpeed;
+
+        RemoteConfigManager.OnConfigLoaded += ApplyRemoteConfig;
     }
+
+    void OnDestroy()
+    {
+        RemoteConfigManager.OnConfigLoaded -= ApplyRemoteConfig;
+    }
+
+    void ApplyRemoteConfig()
+    {
+        enemySpeed = RemoteConfigManager.Instance.EnemySpeed;
+        RemoteConfigManager.OnConfigLoaded -= ApplyRemoteConfig;
+    }
+
     void OnEnable()
     {
         PlayerMovement.OnPlayerMoved += MoveToNextWaypoint;

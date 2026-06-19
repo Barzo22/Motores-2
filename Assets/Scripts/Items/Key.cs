@@ -2,11 +2,21 @@ using UnityEngine;
 
 public class Key : Interactable
 {
-    [SerializeField] string keyID = "key_1";
     [SerializeField] Door door;
+    string keyID;
+
+    void Start()
+    {
+        keyID = $"key_{transform.position.x}_{transform.position.y}";
+
+        if (GameManager.Instance.HasKey(keyID))
+            gameObject.SetActive(false);
+    }
+
     protected override void OnPlayerInteract()
     {
+        GameManager.Instance.CollectKey(keyID);
         door.Open();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

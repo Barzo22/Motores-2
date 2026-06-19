@@ -11,7 +11,6 @@ public class RemoteConfigManager : MonoBehaviour
     public struct AppAttributes { }
 
     public static RemoteConfigManager Instance;
-
     public static event System.Action OnConfigLoaded;
 
     public int MaxLives { get; private set; } = 3;
@@ -34,12 +33,11 @@ public class RemoteConfigManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     async void Start()
     {
         if (Utilities.CheckForInternetConnection())
-        {
             await InitializeRemoteConfig();
-        }
 
         RemoteConfigService.Instance.FetchCompleted += FetchRemoteConfig;
         RemoteConfigService.Instance.FetchConfigs(new UserAttributes(), new AppAttributes());
@@ -50,9 +48,7 @@ public class RemoteConfigManager : MonoBehaviour
         await UnityServices.InitializeAsync();
 
         if (!AuthenticationService.Instance.IsSignedIn)
-        {
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
     }
 
     void FetchRemoteConfig(ConfigResponse response)
