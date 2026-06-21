@@ -6,13 +6,20 @@ public class TurnEnemy : MonoBehaviour
     [SerializeField] Transform[] waypoints;
     [SerializeField] bool loop = true;
     [SerializeField] float enemySpeed = 5f;
+    [SerializeField] float flashDuration = 0.15f;
 
     int currentWaypoint = 0;
     bool movingForward = true;
     bool isMoving = false;
 
+    SpriteRenderer spriteRenderer;
+    Color originalColor;
+
     void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
+
         if (RemoteConfigManager.Instance != null)
             enemySpeed = RemoteConfigManager.Instance.EnemySpeed;
 
@@ -51,6 +58,9 @@ public class TurnEnemy : MonoBehaviour
     {
         isMoving = true;
 
+        // flasheamos a blanco para que contraste con cualquier color base del enemigo
+        StartCoroutine(FlashCoroutine());
+
         while (Vector2.Distance(transform.position, target) > 0.01f)
         {
             transform.position = Vector2.MoveTowards(transform.position, target, enemySpeed * Time.deltaTime);
@@ -59,6 +69,13 @@ public class TurnEnemy : MonoBehaviour
 
         transform.position = target;
         isMoving = false;
+    }
+
+    IEnumerator FlashCoroutine()
+    {
+        spriteRenderer.color = Color.white;
+        yield return new WaitForSeconds(flashDuration);
+        spriteRenderer.color = originalColor;
     }
 
     void AdvanceWaypoint()

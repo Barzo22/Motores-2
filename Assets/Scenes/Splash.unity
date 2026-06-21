@@ -131,6 +131,8 @@ GameObject:
   - component: {fileID: 10028618}
   - component: {fileID: 10028620}
   - component: {fileID: 10028621}
+  - component: {fileID: 10028622}
+  - component: {fileID: 10028623}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -193,6 +195,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameNameText: {fileID: 0}
+--- !u!114 &10028622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10028617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edd33c13100b0a14389f0c144b134a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staminaFull: {fileID: 2524929309071954891, guid: 2213ca72d3691c34b8857d3698a491fa, type: 3}
+  staminaEmpty: {fileID: 3266520322699335011, guid: e129c18628b49464399a7b0c1f92818b, type: 3}
+  maxStamina: 5
+  secondsToRecover: 60
+--- !u!114 &10028623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10028617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 048c90fa9ffef6f4289e8850061a4ff8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicSlider: {fileID: 0}
+  sfxSlider: {fileID: 0}
+  musicSource: {fileID: 0}
+  sfxSource: {fileID: 0}
 --- !u!1 &638717847
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,9 +12,11 @@ public class Coin : Interactable
 
         RemoteConfigManager.OnConfigLoaded += ApplyRemoteConfig;
 
+        // generamos el ID por posición
         coinID = $"coin_{transform.position.x}_{transform.position.y}";
 
-        if (GameManager.Instance.IsCoinCollected(coinID))
+        // si ya la agarramos en este intento, la desactivamos
+        if (GameManager.Instance.IsCoinCollectedThisAttempt(coinID))
             gameObject.SetActive(false);
     }
 
@@ -31,7 +33,7 @@ public class Coin : Interactable
 
     protected override void OnPlayerInteract()
     {
-        GameManager.Instance.CollectCoin(coinID, value);
+        GameManager.Instance.AddCoins(coinID, value);
         gameObject.SetActive(false);
     }
 }

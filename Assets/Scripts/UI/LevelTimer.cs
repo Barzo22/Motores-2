@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class LevelTimer : MonoBehaviour
 {
     public static LevelTimer Instance;
@@ -19,7 +18,6 @@ public class LevelTimer : MonoBehaviour
         }
         else
         {
-            // copiamos los tiempos del nivel actual al instance que ya existe
             Instance.star3Time = star3Time;
             Instance.star2Time = star2Time;
             Destroy(gameObject);
@@ -37,14 +35,15 @@ public class LevelTimer : MonoBehaviour
     public void StartTimer() => isRunning = true;
     public void StopTimer() => isRunning = false;
 
-    // reseteamos y arrancamos el timer para el siguiente nivel
     public void ResetTimer()
     {
         elapsedTime = 0f;
-        isRunning = true; // lo arrancamos de nuevo automáticamente
+        isRunning = true;
     }
 
     public float GetElapsedTime() => elapsedTime;
+    public float GetStar3Time() => star3Time;
+    public float GetStar2Time() => star2Time;
 
     public int GetStars()
     {

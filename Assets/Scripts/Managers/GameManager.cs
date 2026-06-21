@@ -1,22 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
     float coins = 0;
     HashSet<string> collectedKeys = new HashSet<string>();
-    HashSet<string> collectedCoins = new HashSet<string>();
     HashSet<string> openedDoors = new HashSet<string>();
+    HashSet<string> coinsThisAttempt = new HashSet<string>();
 
     [SerializeField] int maxLives = 3;
     public int currentLives;
 
-    // guardamos las monedas del nivel actual para mostrarlas en la victoria
-    int coinsCollectedThisLevel = 0;
     int coinsTotalThisLevel = 0;
+    int coinsCollectedOnComplete = 0;
 
     void Awake()
     {
@@ -37,21 +35,21 @@ public class GameManager : MonoBehaviour
             ? RemoteConfigManager.Instance.MaxLives
             : maxLives;
         currentLives = maxLives;
-        LoadCollectedCoins();
+        coins = PlayerPrefs.GetFloat("TotalCoins", 0);
     }
 
     // --- Monedas ---
 
-    public void CollectCoin(string coinID, float amount)
+    public void AddCoins(string coinID, float amount)
     {
-        if (collectedCoins.Contains(coinID)) return;
-        collectedCoins.Add(coinID);
+        if (coinsThisAttempt.Contains(coinID)) return;
+        coinsThisAttempt.Add(coinID);
         coins += amount;
-        coinsCollectedThisLevel++;
-        SaveCollectedCoins();
+        PlayerPrefs.SetFloat("TotalCoins", coins);
+        PlayerPrefs.Save();
     }
 
-    public bool IsCoinCollected(string coinID) => collectedCoins.Contains(coinID);
+    public bool IsCoinCollectedThisAttempt(string coinID) => coinsThisAttempt.Contains(coinID);
 
     public float GetCoins() => coins;
 
@@ -59,33 +57,15 @@ public class GameManager : MonoBehaviour
     {
         if (coins < amount) return false;
         coins -= amount;
+        PlayerPrefs.SetFloat("TotalCoins", coins);
+        PlayerPrefs.Save();
         return true;
     }
 
-    // lo llama el HUD al iniciar el nivel para registrar el total
-    public void SetTotalCoinsInLevel(int total)
-    {
-        coinsTotalThisLevel = total;
-        coinsCollectedThisLevel = 0;
-    }
-
-    public int GetCoinsCollectedThisLevel() => coinsCollectedThisLevel;
+    public void SetTotalCoinsInLevel(int total) => coinsTotalThisLevel = total;
     public int GetCoinsTotalThisLevel() => coinsTotalThisLevel;
-
-    void SaveCollectedCoins()
-    {
-        string joined = string.Join(",", collectedCoins);
-        PlayerPrefs.SetString("CollectedCoins", joined);
-        PlayerPrefs.Save();
-    }
-
-    void LoadCollectedCoins()
-    {
-        string joined = PlayerPrefs.GetString("CollectedCoins", "");
-        if (string.IsNullOrEmpty(joined)) return;
-        foreach (string id in joined.Split(','))
-            collectedCoins.Add(id);
-    }
+    public int GetCoinsCollectedThisAttempt() => coinsThisAttempt.Count;
+    public int GetCoinsCollectedOnComplete() => coinsCollectedOnComplete;
 
     // --- Llaves ---
 
@@ -126,7 +106,7 @@ public class GameManager : MonoBehaviour
 
         if (currentLives <= 0)
         {
-            coins = 0;
+            coinsThisAttempt.Clear();
             collectedKeys.Clear();
             openedDoors.Clear();
             if (LevelTimer.Instance != null)
@@ -141,20 +121,56 @@ public class GameManager : MonoBehaviour
 
     // --- Navegación ---
 
-    public void LevelComplete()
+    public void LevelComplete(int coinsCollected)
     {
+        coinsCollectedOnComplete = coinsCollected;
+
         if (LevelTimer.Instance != null)
             LevelTimer.Instance.StopTimer();
+
+        coinsThisAttempt.Clear();
+        collectedKeys.Clear();
+        openedDoors.Clear();
 
         PlayerPrefs.SetInt("LastLevel", SceneManager.GetActiveScene().buildIndex);
         SceneManager.LoadScene("LevelComplete");
     }
 
+    // devuelve true si pudo entrar al nivel (tenía stamina)
+    public bool TryEnterLevel(string sceneName)
+    {
+        if (StaminaSystem.Instance != null && !StaminaSystem.Instance.UseStamina())
+        {
+            Debug.Log("Sin stamina para entrar al nivel!");
+            return false;
+        }
+
+        maxLives = RemoteConfigManager.Instance != null
+            ? RemoteConfigManager.Instance.MaxLives
+            : maxLives;
+        currentLives = maxLives;
+        coinsThisAttempt.Clear();
+        collectedKeys.Clear();
+        openedDoors.Clear();
+
+        if (LevelTimer.Instance != null)
+            LevelTimer.Instance.ResetTimer();
+
+        SceneManager.LoadScene(sceneName);
+        return true;
+    }
+
     public void OnNextLevelButton()
     {
+        if (StaminaSystem.Instance != null && !StaminaSystem.Instance.UseStamina())
+        {
+            Debug.Log("Sin stamina para entrar al nivel!");
+            return;
+        }
+
         int nextLevel = PlayerPrefs.GetInt("LastLevel", 2) + 1;
         currentLives = maxLives;
-        coins = 0;
+        coinsThisAttempt.Clear();
         collectedKeys.Clear();
         openedDoors.Clear();
         if (LevelTimer.Instance != null)
@@ -162,18 +178,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(nextLevel);
     }
 
+    // ahora OnPlayButton usa TryEnterLevel
     public void OnPlayButton()
     {
-        maxLives = RemoteConfigManager.Instance != null
-            ? RemoteConfigManager.Instance.MaxLives
-            : maxLives;
-        currentLives = maxLives;
-        coins = 0;
-        collectedKeys.Clear();
-        openedDoors.Clear();
-        if (LevelTimer.Instance != null)
-            LevelTimer.Instance.ResetTimer();
-        SceneManager.LoadScene("Level1");
+        TryEnterLevel("Level1");
     }
 
     public void OnExitButton()
@@ -184,7 +192,7 @@ public class GameManager : MonoBehaviour
     public void OnMenuButton()
     {
         currentLives = maxLives;
-        coins = 0;
+        coinsThisAttempt.Clear();
         collectedKeys.Clear();
         openedDoors.Clear();
         if (LevelTimer.Instance != null)
@@ -195,7 +203,7 @@ public class GameManager : MonoBehaviour
     public void DeleteSaveData()
     {
         PlayerPrefs.DeleteAll();
-        collectedCoins.Clear();
         coins = 0;
+        coinsThisAttempt.Clear();
     }
 }
