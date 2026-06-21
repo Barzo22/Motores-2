@@ -45,7 +45,15 @@ public class VolumeManager : MonoBehaviour
 
     void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        // buscamos los sliders en la nueva escena por nombre
+        // limpiamos los listeners de los sliders anteriores antes de buscar los nuevos
+        if (musicSlider != null)
+            musicSlider.onValueChanged.RemoveListener(OnMusicVolumeChanged);
+        if (sfxSlider != null)
+            sfxSlider.onValueChanged.RemoveListener(OnSFXVolumeChanged);
+
+        musicSlider = null;
+        sfxSlider = null;
+
         FindSliders();
     }
 

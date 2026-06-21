@@ -13,7 +13,6 @@ public class StaminaSystem : MonoBehaviour
     [SerializeField] int maxStamina = 5;
     [SerializeField] int secondsToRecover = 60;
 
-    // referencias a la UI — las buscamos dinámicamente al volver al menú
     Image[] staminaIcons;
     TMP_Text timerText;
 
@@ -45,7 +44,6 @@ public class StaminaSystem : MonoBehaviour
 
     void OnEnable()
     {
-        // nos suscribimos al evento de carga de escena para reasignar referencias
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -56,7 +54,10 @@ public class StaminaSystem : MonoBehaviour
 
     void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        // cada vez que carga una escena buscamos los elementos de UI por tag o nombre
+        // limpiamos referencias viejas antes de buscar las nuevas
+        staminaIcons = null;
+        timerText = null;
+
         FindStaminaUI();
         UpdateStaminaUI();
         UpdateTimerUI();
@@ -64,7 +65,6 @@ public class StaminaSystem : MonoBehaviour
 
     void FindStaminaUI()
     {
-        // buscamos el GameObject que contiene los iconos de stamina por nombre
         GameObject staminaContainer = GameObject.Find("StaminaIcons");
         if (staminaContainer != null)
             staminaIcons = staminaContainer.GetComponentsInChildren<Image>();
@@ -159,8 +159,13 @@ public class StaminaSystem : MonoBehaviour
     void UpdateStaminaUI()
     {
         if (staminaIcons == null) return;
+
         for (int i = 0; i < staminaIcons.Length; i++)
+        {
+            // chequeamos que la Image no fue destruida antes de accederla
+            if (staminaIcons[i] == null) continue;
             staminaIcons[i].sprite = i < currentStamina ? staminaFull : staminaEmpty;
+        }
     }
 
     void UpdateTimerUI()

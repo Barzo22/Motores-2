@@ -53,7 +53,7 @@ public class VictoryScreen : MonoBehaviour
 
         int collected = GameManager.Instance.GetCoinsCollectedOnComplete();
         int total = GameManager.Instance.GetCoinsTotalThisLevel();
-        coinsText.text = $"Monedas: {collected}/{total}";
+        coinsText.text = $"{collected}/{total}";
     }
 
     void SetRow(Image[] stars, TMP_Text label, int filledCount, string text, bool isActive)
