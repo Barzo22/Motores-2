@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -15,6 +16,17 @@ public class GameManager : MonoBehaviour
 
     int coinsTotalThisLevel = 0;
     int coinsCollectedOnComplete = 0;
+
+    [SerializeField] float debugCoins = 100f;
+
+    [ContextMenu("Add Debug Coins")]
+    void AddDebugCoins()
+    {
+        coins = debugCoins;
+        PlayerPrefs.SetFloat("TotalCoins", coins);
+        PlayerPrefs.Save();
+        Debug.Log($"Debug coins set to {coins}");
+    }
 
     void Awake()
     {
@@ -93,7 +105,9 @@ public class GameManager : MonoBehaviour
 
     public int GetLevelStars(int levelIndex)
     {
-        return PlayerPrefs.GetInt($"stars_level_{levelIndex}", 0);
+        int stars = PlayerPrefs.GetInt($"stars_level_{levelIndex}", 0);
+        Debug.Log($"GetLevelStars level {levelIndex}: {stars}");
+        return stars;
     }
 
     // --- Vidas ---
@@ -136,7 +150,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("LevelComplete");
     }
 
-    // devuelve true si pudo entrar al nivel (tenía stamina)
     public bool TryEnterLevel(string sceneName)
     {
         if (StaminaSystem.Instance != null && !StaminaSystem.Instance.UseStamina())
@@ -178,7 +191,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(nextLevel);
     }
 
-    // ahora OnPlayButton usa TryEnterLevel
     public void OnPlayButton()
     {
         TryEnterLevel("Level1");
@@ -203,7 +215,15 @@ public class GameManager : MonoBehaviour
     public void DeleteSaveData()
     {
         PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log($"After delete, stars_level_2: {PlayerPrefs.GetInt("stars_level_2", 0)}");
         coins = 0;
         coinsThisAttempt.Clear();
+        collectedKeys.Clear();
+        openedDoors.Clear();
+        if (StaminaSystem.Instance != null)
+            StaminaSystem.Instance.ResetStamina();
+        if (SkinManager.Instance != null)
+            SkinManager.Instance.ResetSkins();
     }
 }

@@ -54,10 +54,8 @@ public class StaminaSystem : MonoBehaviour
 
     void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        // limpiamos referencias viejas antes de buscar las nuevas
         staminaIcons = null;
         timerText = null;
-
         FindStaminaUI();
         UpdateStaminaUI();
         UpdateTimerUI();
@@ -152,6 +150,18 @@ public class StaminaSystem : MonoBehaviour
         Save();
     }
 
+    // resetea la stamina al máximo, se usa al borrar el progreso
+    public void ResetStamina()
+    {
+        StopAllCoroutines();
+        currentStamina = maxStamina;
+        recharging = false;
+        nextStaminaTime = DateTime.Now;
+        lastStaminaTime = DateTime.Now;
+        UpdateStaminaUI();
+        UpdateTimerUI();
+    }
+
     public int GetCurrentStamina() => currentStamina;
     public int GetMaxStamina() => maxStamina;
     public bool HasStamina() => currentStamina > 0;
@@ -162,7 +172,6 @@ public class StaminaSystem : MonoBehaviour
 
         for (int i = 0; i < staminaIcons.Length; i++)
         {
-            // chequeamos que la Image no fue destruida antes de accederla
             if (staminaIcons[i] == null) continue;
             staminaIcons[i].sprite = i < currentStamina ? staminaFull : staminaEmpty;
         }

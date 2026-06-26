@@ -8,6 +8,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] TextMeshProUGUI coinsText;
     [SerializeField] GameObject noStaminaPanel;
 
+    [SerializeField] CanvasGroup menuButtonsGroup;
+    [SerializeField] LevelSelector levelSelector;
+
+
     void Start()
     {
         if (RemoteConfigManager.Instance != null)
@@ -15,6 +19,8 @@ public class MainMenu : MonoBehaviour
 
         if (noStaminaPanel != null)
             noStaminaPanel.SetActive(false);
+
+        SetMenuInteractable(true);
     }
 
     void Update()
@@ -23,9 +29,15 @@ public class MainMenu : MonoBehaviour
             coinsText.text = GameManager.Instance.GetCoins().ToString();
     }
 
+    public void SetMenuInteractable(bool interactable)
+    {
+        if (menuButtonsGroup == null) return;
+        menuButtonsGroup.interactable = interactable;
+        menuButtonsGroup.blocksRaycasts = interactable;
+    }
+
     public void OnPlay()
     {
-        // null check por si arrancamos directo desde la escena del menú
         if (StaminaSystem.Instance == null)
         {
             GameManager.Instance?.OnPlayButton();
@@ -36,10 +48,32 @@ public class MainMenu : MonoBehaviour
         {
             if (noStaminaPanel != null)
                 noStaminaPanel.SetActive(true);
+            SetMenuInteractable(false);
             return;
         }
 
         GameManager.Instance?.OnPlayButton();
+    }
+
+    public void OnOpenPanel(GameObject panel)
+    {
+        panel.SetActive(true);
+        SetMenuInteractable(false);
+    }
+
+    public void OnClosePanel(GameObject panel)
+    {
+        panel.SetActive(false);
+        SetMenuInteractable(true);
+    }
+
+    public void OnDeleteSaveData()
+    {
+        GameManager.Instance.DeleteSaveData();
+        if (Shop.Instance != null)
+            Shop.Instance.RefreshAllButtons();
+        if (levelSelector != null)
+            levelSelector.RefreshButtons();
     }
 
     public void OnExit() => GameManager.Instance?.OnExitButton();

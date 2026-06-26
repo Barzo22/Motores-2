@@ -11,10 +11,15 @@ public class LevelSelector : MonoBehaviour
 
     [SerializeField] GameObject noStaminaPanel;
 
-    void Start()
+    void OnEnable()
     {
-        if (noStaminaPanel != null)
-            noStaminaPanel.SetActive(false);
+        RefreshButtons();
+    }
+
+    public void RefreshButtons()
+    {
+        foreach (Transform child in content)
+            Destroy(child.gameObject);
 
         for (int i = 0; i < levels.Length; i++)
         {

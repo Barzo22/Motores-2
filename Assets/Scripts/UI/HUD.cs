@@ -28,5 +28,9 @@ public class HUD : MonoBehaviour
             hearts[i].enabled = i < GameManager.Instance.currentLives;
     }
 
-    public void OnPauseButton() => pauseMenu.TogglePause();
+    public void OnPauseButton()
+    {
+        Debug.Log("OnPauseButton called");
+        pauseMenu.TogglePause();
+    }
 }

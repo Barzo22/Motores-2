@@ -19,6 +19,7 @@ public class PauseMenu : MonoBehaviour
         pausePanel.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
 
+        Debug.Log($"LevelTimer instance: {LevelTimer.Instance}");
         if (LevelTimer.Instance != null)
         {
             if (isPaused) LevelTimer.Instance.StopTimer();
