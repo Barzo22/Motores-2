@@ -183,6 +183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxLives: 3
   currentLives: 0
+  deathEffect: {fileID: 6332160730255961190, guid: 5f2b7af45ad040f48bdc643964411520, type: 3}
   debugCoins: 200
 --- !u!114 &10028621
 MonoBehaviour:

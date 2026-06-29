@@ -3,6 +3,9 @@ using UnityEngine;
 public class Coin : Interactable
 {
     [SerializeField] float value = 1;
+    [SerializeField] ParticleSystem collectEffect;
+    [SerializeField] AudioClip collectSound;
+
     string coinID;
 
     void Start()
@@ -12,10 +15,8 @@ public class Coin : Interactable
 
         RemoteConfigManager.OnConfigLoaded += ApplyRemoteConfig;
 
-        // generamos el ID por posición
         coinID = $"coin_{transform.position.x}_{transform.position.y}";
 
-        // si ya la agarramos en este intento, la desactivamos
         if (GameManager.Instance.IsCoinCollectedThisAttempt(coinID))
             gameObject.SetActive(false);
     }
@@ -33,6 +34,15 @@ public class Coin : Interactable
 
     protected override void OnPlayerInteract()
     {
+        if (collectEffect != null)
+        {
+            ParticleSystem ps = Instantiate(collectEffect, transform.position, Quaternion.identity);
+            ps.Play();
+        }
+
+        if (collectSound != null)
+            AudioSource.PlayClipAtPoint(collectSound, transform.position);
+
         GameManager.Instance.AddCoins(coinID, value);
         gameObject.SetActive(false);
     }

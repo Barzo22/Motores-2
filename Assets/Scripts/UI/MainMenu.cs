@@ -75,6 +75,10 @@ public class MainMenu : MonoBehaviour
         if (levelSelector != null)
             levelSelector.RefreshButtons();
     }
-
+    public void OnUnequipSkin()
+    {
+        if (SkinManager.Instance != null)
+            SkinManager.Instance.UnequipSkin();
+    }
     public void OnExit() => GameManager.Instance?.OnExitButton();
 }

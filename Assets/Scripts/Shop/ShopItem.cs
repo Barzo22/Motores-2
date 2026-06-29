@@ -5,7 +5,8 @@ public class ShopItem : ScriptableObject
 {
     public string itemName;
     public string itemDescription;
-    public Sprite itemIcon;      
-    public Sprite skinSprite;    
+    public Sprite itemIcon;
+    public Sprite skinSprite;
     public int itemCost;
+    public Color particleColor = Color.white;
 }

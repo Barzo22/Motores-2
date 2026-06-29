@@ -1,6 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class GameManager : MonoBehaviour
 
     int coinsTotalThisLevel = 0;
     int coinsCollectedOnComplete = 0;
+
+    [Header("Death Effect")]
+    [SerializeField] ParticleSystem deathEffect;
 
     [SerializeField] float debugCoins = 100f;
 
@@ -118,19 +122,43 @@ public class GameManager : MonoBehaviour
     {
         currentLives--;
 
+        if (PlayerMovement.Instance != null)
+        {
+            PlayerMovement.Instance.PlayDeathSound();
+
+            if (deathEffect != null)
+            {
+                ParticleSystem ps = Instantiate(deathEffect, PlayerMovement.Instance.transform.position, Quaternion.identity);
+
+                if (SkinManager.Instance != null)
+                    SkinManager.Instance.ApplyColorToParticleSystem(ps);
+
+                ps.Play();
+            }
+
+            PlayerMovement.Instance.gameObject.SetActive(false);
+        }
+
         if (currentLives <= 0)
+            StartCoroutine(LoadSceneDelayed("GameOver"));
+        else
+            StartCoroutine(LoadSceneDelayed(SceneManager.GetActiveScene().name));
+    }
+
+    IEnumerator LoadSceneDelayed(string sceneName)
+    {
+        yield return new WaitForSeconds(0.6f);
+
+        if (sceneName == "GameOver")
         {
             coinsThisAttempt.Clear();
             collectedKeys.Clear();
             openedDoors.Clear();
             if (LevelTimer.Instance != null)
                 LevelTimer.Instance.ResetTimer();
-            SceneManager.LoadScene("GameOver");
         }
-        else
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+
+        SceneManager.LoadScene(sceneName);
     }
 
     // --- Navegación ---

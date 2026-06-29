@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 10f;
@@ -8,24 +8,51 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask wallLayer;
     [SerializeField] float raycastDistance = 0.1f;
 
+    [SerializeField] float squashAmount = 0.6f;
+    [SerializeField] float stretchAmount = 1.4f;
+    [SerializeField] float squashDuration = 0.08f;
+    [SerializeField] float returnDuration = 0.15f;
+
+    [Header("Effects")]
+    [SerializeField] ParticleSystem wallHitVertical;
+    [SerializeField] ParticleSystem wallHitHorizontal;
+    [SerializeField] AudioClip wallHitSound;
+    [SerializeField] AudioClip deathSound;
+    [SerializeField] AudioSource audioSource;
+
     Vector2 swipeInitialPosition;
     bool swipeCalculated = false;
     bool isMoving = false;
     Vector2 moveDirection;
+    bool eventFired = false;
+
+    Vector3 originalScale;
 
     public static event System.Action OnPlayerMoved;
+    public static PlayerMovement Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
+        originalScale = transform.localScale;
+
         if (RemoteConfigManager.Instance != null)
             moveSpeed = RemoteConfigManager.Instance.MoveSpeed;
 
         RemoteConfigManager.OnConfigLoaded += ApplyRemoteConfig;
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     void OnDestroy()
     {
         RemoteConfigManager.OnConfigLoaded -= ApplyRemoteConfig;
+        if (Instance == this) Instance = null;
     }
 
     void ApplyRemoteConfig()
@@ -80,8 +107,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    bool eventFired = false;
-
     void StartMoving(Vector2 direction)
     {
         if (isMoving) return;
@@ -101,6 +126,26 @@ public class PlayerMovement : MonoBehaviour
             transform.position = (Vector2)transform.position + moveDirection * moveDistance;
             isMoving = false;
 
+            if (wallHitVertical != null && wallHitHorizontal != null)
+            {
+                bool isHorizontalMove = Mathf.Abs(moveDirection.x) > Mathf.Abs(moveDirection.y);
+                ParticleSystem effect = isHorizontalMove ? wallHitHorizontal : wallHitVertical;
+                Vector2 hitPoint = (Vector2)transform.position + moveDirection * 0.2f;
+                ParticleSystem ps = Instantiate(effect, hitPoint, effect.transform.rotation);
+
+                // aplicamos el color de la skin actual desde el SkinManager
+                if (SkinManager.Instance != null)
+                {
+                    var main = ps.main;
+                    main.startColor = SkinManager.Instance.CurrentParticleColor;
+                }
+
+                ps.Play();
+            }
+
+            PlaySFX(wallHitSound);
+            StartCoroutine(SquashAndStretch(moveDirection));
+
             if (moveDistance > 0.01f && !eventFired)
             {
                 eventFired = true;
@@ -118,6 +163,43 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+    public void PlayDeathSound()
+    {
+        if (deathSound == null) return;
+        AudioSource.PlayClipAtPoint(deathSound, transform.position);
+    }
+
+    void PlaySFX(AudioClip clip)
+    {
+        if (clip == null || audioSource == null) return;
+        audioSource.PlayOneShot(clip);
+    }
+
+    IEnumerator SquashAndStretch(Vector2 direction)
+    {
+        bool isHorizontal = Mathf.Abs(direction.x) > Mathf.Abs(direction.y);
+
+        Vector3 squashedScale = isHorizontal
+            ? new Vector3(originalScale.x * squashAmount, originalScale.y * stretchAmount, originalScale.z)
+            : new Vector3(originalScale.x * stretchAmount, originalScale.y * squashAmount, originalScale.z);
+
+        float elapsed = 0f;
+        while (elapsed < squashDuration)
+        {
+            transform.localScale = Vector3.Lerp(originalScale, squashedScale, elapsed / squashDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = squashedScale;
+
+        elapsed = 0f;
+        while (elapsed < returnDuration)
+        {
+            transform.localScale = Vector3.Lerp(squashedScale, originalScale, elapsed / returnDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = originalScale;
+    }
 }
-
-

@@ -3,6 +3,9 @@ using UnityEngine;
 public class Key : Interactable
 {
     [SerializeField] Door door;
+    [SerializeField] ParticleSystem collectEffect;
+    [SerializeField] AudioClip collectSound;
+
     string keyID;
 
     void Start()
@@ -15,6 +18,15 @@ public class Key : Interactable
 
     protected override void OnPlayerInteract()
     {
+        if (collectEffect != null)
+        {
+            ParticleSystem ps = Instantiate(collectEffect, transform.position, Quaternion.identity);
+            ps.Play();
+        }
+
+        if (collectSound != null)
+            AudioSource.PlayClipAtPoint(collectSound, transform.position);
+
         GameManager.Instance.CollectKey(keyID);
         door.Open();
         gameObject.SetActive(false);

@@ -4,6 +4,8 @@ public class Door : MonoBehaviour
 {
     [SerializeField] Sprite openSprite;
     [SerializeField] Sprite closedSprite;
+    [SerializeField] ParticleSystem openEffect;
+    [SerializeField] AudioClip openSound;
 
     SpriteRenderer spriteRenderer;
     Collider2D col;
@@ -26,6 +28,15 @@ public class Door : MonoBehaviour
 
     public void Open()
     {
+        if (openEffect != null)
+        {
+            ParticleSystem ps = Instantiate(openEffect, transform.position, Quaternion.identity);
+            ps.Play();
+        }
+
+        if (openSound != null)
+            AudioSource.PlayClipAtPoint(openSound, transform.position);
+
         GameManager.Instance.RegisterDoorOpen(doorID);
         SetOpen(true);
     }
