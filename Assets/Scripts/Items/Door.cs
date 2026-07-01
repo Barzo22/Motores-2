@@ -35,7 +35,7 @@ public class Door : MonoBehaviour
         }
 
         if (openSound != null)
-            AudioSource.PlayClipAtPoint(openSound, transform.position);
+            VolumeManager.Instance?.PlaySFXAtVolume(openSound);
 
         GameManager.Instance.RegisterDoorOpen(doorID);
         SetOpen(true);

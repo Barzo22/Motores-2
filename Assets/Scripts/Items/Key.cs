@@ -25,7 +25,7 @@ public class Key : Interactable
         }
 
         if (collectSound != null)
-            AudioSource.PlayClipAtPoint(collectSound, transform.position);
+            VolumeManager.Instance?.PlaySFXAtVolume(collectSound);
 
         GameManager.Instance.CollectKey(keyID);
         door.Open();

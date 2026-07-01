@@ -41,7 +41,7 @@ public class Coin : Interactable
         }
 
         if (collectSound != null)
-            AudioSource.PlayClipAtPoint(collectSound, transform.position);
+            VolumeManager.Instance?.PlaySFXAtVolume(collectSound);
 
         GameManager.Instance.AddCoins(coinID, value);
         gameObject.SetActive(false);

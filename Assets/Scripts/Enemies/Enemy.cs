@@ -58,7 +58,6 @@ public class TurnEnemy : MonoBehaviour
     {
         isMoving = true;
 
-        // flasheamos a blanco para que contraste con cualquier color base del enemigo
         StartCoroutine(FlashCoroutine());
 
         while (Vector2.Distance(transform.position, target) > 0.01f)

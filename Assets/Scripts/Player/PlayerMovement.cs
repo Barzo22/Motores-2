@@ -133,7 +133,6 @@ public class PlayerMovement : MonoBehaviour
                 Vector2 hitPoint = (Vector2)transform.position + moveDirection * 0.2f;
                 ParticleSystem ps = Instantiate(effect, hitPoint, effect.transform.rotation);
 
-                // aplicamos el color de la skin actual desde el SkinManager
                 if (SkinManager.Instance != null)
                 {
                     var main = ps.main;
@@ -143,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
                 ps.Play();
             }
 
-            PlaySFX(wallHitSound);
+            VolumeManager.Instance?.PlaySFXAtVolume(wallHitSound);
             StartCoroutine(SquashAndStretch(moveDirection));
 
             if (moveDistance > 0.01f && !eventFired)
@@ -167,7 +166,7 @@ public class PlayerMovement : MonoBehaviour
     public void PlayDeathSound()
     {
         if (deathSound == null) return;
-        AudioSource.PlayClipAtPoint(deathSound, transform.position);
+        VolumeManager.Instance?.PlaySFXAtVolume(deathSound);
     }
 
     void PlaySFX(AudioClip clip)

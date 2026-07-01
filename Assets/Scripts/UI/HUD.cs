@@ -30,6 +30,7 @@ public class HUD : MonoBehaviour
 
     public void OnPauseButton()
     {
+        VolumeManager.Instance.PlayButtonClick();
         Debug.Log("OnPauseButton called");
         pauseMenu.TogglePause();
     }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ea5dfcdb128d2c04abb322adca457d00
+guid: 8cf064a5e7d5da04ea689f199d3452c8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8284131353437253091
-    second: Captura de pantalla (710)_0
+      213: 321774652615119853
+    second: Squishy_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Captura de pantalla (710)_0
+      name: Squishy_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 503
-        height: 503
+        width: 1254
+        height: 1254
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d1252bddc6ad80d80800000000000000
-      internalID: -8284131353437253091
+      spriteID: de359da775c277400800000000000000
+      internalID: 321774652615119853
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Captura de pantalla (710)_0: -8284131353437253091
+      Squishy_0: 321774652615119853
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

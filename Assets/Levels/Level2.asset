@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelName: 2
   sceneName: Level2
-  levelPreview: {fileID: 21300000, guid: db4d7f23e86a0ef4d883ba6d43356e04, type: 3}
+  levelPreview: {fileID: -8284131353437253091, guid: ea5dfcdb128d2c04abb322adca457d00, type: 3}
   levelIndex: 3

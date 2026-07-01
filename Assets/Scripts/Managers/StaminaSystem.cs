@@ -150,7 +150,6 @@ public class StaminaSystem : MonoBehaviour
         Save();
     }
 
-    // resetea la stamina al máximo, se usa al borrar el progreso
     public void ResetStamina()
     {
         StopAllCoroutines();

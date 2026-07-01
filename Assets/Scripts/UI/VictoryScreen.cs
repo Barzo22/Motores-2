@@ -1,6 +1,6 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class VictoryScreen : MonoBehaviour
 {
@@ -23,7 +23,6 @@ public class VictoryScreen : MonoBehaviour
     [SerializeField] Color activeColor = new Color(1f, 0.85f, 0f);
     [SerializeField] Color inactiveColor = new Color(0.5f, 0.5f, 0.5f);
 
-    // panel que se muestra cuando no hay stamina
     [SerializeField] GameObject noStaminaPanel;
 
     void Start()
@@ -46,9 +45,9 @@ public class VictoryScreen : MonoBehaviour
             for (int i = 0; i < starImages.Length; i++)
                 starImages[i].sprite = i < stars ? starFilled : starEmpty;
 
-            SetRow(row3Stars, row3Text, 3, $"< {FormatTime(star3Time)}", stars == 3);
-            SetRow(row2Stars, row2Text, 2, $"< {FormatTime(star2Time)}", stars == 2);
-            SetRow(row1Stars, row1Text, 1, $"+ {FormatTime(star2Time)}", stars == 1);
+            SetRow(row3Stars, row3Text, 3, $"{FormatTime(star3Time)}", stars == 3);
+            SetRow(row2Stars, row2Text, 2, $"{FormatTime(star2Time)}", stars == 2);
+            SetRow(row1Stars, null, 1, "", stars == 1);
         }
 
         int collected = GameManager.Instance.GetCoinsCollectedOnComplete();
@@ -58,14 +57,19 @@ public class VictoryScreen : MonoBehaviour
 
     void SetRow(Image[] stars, TMP_Text label, int filledCount, string text, bool isActive)
     {
+        if (stars == null) return;
+
         for (int i = 0; i < stars.Length; i++)
             stars[i].sprite = i < filledCount ? starFilled : starEmpty;
 
-        label.text = text;
-        label.color = isActive ? activeColor : inactiveColor;
-
         foreach (Image star in stars)
             star.color = isActive ? Color.white : inactiveColor;
+
+        if (label != null)
+        {
+            label.text = text;
+            label.color = isActive ? activeColor : inactiveColor;
+        }
     }
 
     string FormatTime(float seconds)
@@ -75,11 +79,16 @@ public class VictoryScreen : MonoBehaviour
         return $"{m:00}:{s:00}";
     }
 
-    public void OnMenu() => GameManager.Instance.OnMenuButton();
+    public void OnMenu()
+    {
+        VolumeManager.Instance.PlayButtonClick();
+        GameManager.Instance.OnMenuButton();
+    }
 
     public void OnNextLevel()
     {
-        // si no tiene stamina mostramos el panel de aviso
+        VolumeManager.Instance.PlayButtonClick();
+
         if (StaminaSystem.Instance != null && !StaminaSystem.Instance.HasStamina())
         {
             if (noStaminaPanel != null)

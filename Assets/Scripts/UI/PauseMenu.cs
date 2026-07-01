@@ -19,7 +19,9 @@ public class PauseMenu : MonoBehaviour
         pausePanel.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
 
-        Debug.Log($"LevelTimer instance: {LevelTimer.Instance}");
+        if (isPaused && VolumeManager.Instance != null)
+            VolumeManager.Instance.RefreshSliders();
+
         if (LevelTimer.Instance != null)
         {
             if (isPaused) LevelTimer.Instance.StopTimer();
@@ -29,6 +31,8 @@ public class PauseMenu : MonoBehaviour
 
     public void OnResume()
     {
+        VolumeManager.Instance.PlayButtonClick();
+
         isPaused = false;
         pausePanel.SetActive(false);
         optionsPanel.SetActive(false);
@@ -39,20 +43,27 @@ public class PauseMenu : MonoBehaviour
 
     public void OnOptions()
     {
-        // mostramos el panel de opciones y ocultamos el de pausa
+        VolumeManager.Instance.PlayButtonClick();
+
         pausePanel.SetActive(false);
         optionsPanel.SetActive(true);
+
+        if (VolumeManager.Instance != null)
+            VolumeManager.Instance.RefreshSliders();
     }
 
     public void OnCloseOptions()
     {
-        // volvemos al panel de pausa
+        VolumeManager.Instance.PlayButtonClick();
+
         optionsPanel.SetActive(false);
         pausePanel.SetActive(true);
     }
 
     public void OnMenu()
     {
+        VolumeManager.Instance.PlayButtonClick();
+
         Time.timeScale = 1f;
         GameManager.Instance.OnMenuButton();
     }

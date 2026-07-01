@@ -1,3 +1,12 @@
 fileFormatVersion: 2
 <<<<<<<< HEAD:Assets/Resources/HUD.meta
-guid: 0e9e242b599124f4181034e17bb8d460
+guid: cf232b79263e0ae4a9d072a1ca30d56c
+folderAsset: yes
+========
+guid: 33648003945c9f64880e4dbe10f28c57
+>>>>>>>> d709abe8535ab0df7a5ecd23fdff84e8c13e5713:Assets/Scenes/Level2.unity.meta
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -4,19 +4,13 @@ using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI titleText;
     [SerializeField] TextMeshProUGUI coinsText;
     [SerializeField] GameObject noStaminaPanel;
 
     [SerializeField] CanvasGroup menuButtonsGroup;
     [SerializeField] LevelSelector levelSelector;
-
-
     void Start()
     {
-        if (RemoteConfigManager.Instance != null)
-            titleText.text = RemoteConfigManager.Instance.GameName;
-
         if (noStaminaPanel != null)
             noStaminaPanel.SetActive(false);
 
@@ -38,6 +32,8 @@ public class MainMenu : MonoBehaviour
 
     public void OnPlay()
     {
+        VolumeManager.Instance.PlayButtonClick();
+
         if (StaminaSystem.Instance == null)
         {
             GameManager.Instance?.OnPlayButton();
@@ -57,19 +53,25 @@ public class MainMenu : MonoBehaviour
 
     public void OnOpenPanel(GameObject panel)
     {
+        VolumeManager.Instance.PlayButtonClick();
         panel.SetActive(true);
+        VolumeManager.Instance.RefreshSliders();
         SetMenuInteractable(false);
     }
 
     public void OnClosePanel(GameObject panel)
     {
+        VolumeManager.Instance.PlayButtonClick();
         panel.SetActive(false);
         SetMenuInteractable(true);
     }
 
     public void OnDeleteSaveData()
     {
+        VolumeManager.Instance.PlayButtonClick();
         GameManager.Instance.DeleteSaveData();
+        VolumeManager.Instance?.ResetVolume();
+
         if (Shop.Instance != null)
             Shop.Instance.RefreshAllButtons();
         if (levelSelector != null)
@@ -77,6 +79,7 @@ public class MainMenu : MonoBehaviour
     }
     public void OnUnequipSkin()
     {
+        VolumeManager.Instance.PlayButtonClick();
         if (SkinManager.Instance != null)
             SkinManager.Instance.UnequipSkin();
     }

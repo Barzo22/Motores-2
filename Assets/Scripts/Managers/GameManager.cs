@@ -120,25 +120,22 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDied()
     {
-        currentLives--;
+        PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
+        PlayerPrefs.Save();
 
+        currentLives--;
         if (PlayerMovement.Instance != null)
         {
             PlayerMovement.Instance.PlayDeathSound();
-
             if (deathEffect != null)
             {
                 ParticleSystem ps = Instantiate(deathEffect, PlayerMovement.Instance.transform.position, Quaternion.identity);
-
                 if (SkinManager.Instance != null)
                     SkinManager.Instance.ApplyColorToParticleSystem(ps);
-
                 ps.Play();
             }
-
             PlayerMovement.Instance.gameObject.SetActive(false);
         }
-
         if (currentLives <= 0)
             StartCoroutine(LoadSceneDelayed("GameOver"));
         else
@@ -221,7 +218,8 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayButton()
     {
-        TryEnterLevel("Level1");
+        string lastScene = PlayerPrefs.GetString("LastScene", "Level1");
+        TryEnterLevel(lastScene);
     }
 
     public void OnExitButton()

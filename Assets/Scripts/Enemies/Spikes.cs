@@ -7,9 +7,7 @@ public class Spikes : MonoBehaviour
     [SerializeField] float timeOffset = 0f;
     [SerializeField] Color activeColor = Color.red;
 
-    // cuánto tiempo antes de activarse empieza el warning
     [SerializeField] float warningTime = 1f;
-    // velocidad del parpadeo
     [SerializeField] float blinkSpeed = 8f;
 
     Collider2D col;
@@ -33,11 +31,9 @@ public class Spikes : MonoBehaviour
 
         if (!isActive)
         {
-            // si estamos cerca de activarnos, mostramos el warning
             if (timer <= warningTime)
             {
                 isWarning = true;
-                // parpadeamos entre transparente y rojo usando un seno
                 float alpha = (Mathf.Sin(Time.time * blinkSpeed) + 1f) / 2f;
                 spriteRenderer.color = new Color(activeColor.r, activeColor.g, activeColor.b, alpha);
             }

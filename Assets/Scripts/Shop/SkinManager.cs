@@ -8,6 +8,8 @@ public class SkinManager : MonoBehaviour
     string equippedSkinName = "";
     public Color CurrentParticleColor { get; private set; } = Color.white;
 
+    [SerializeField] Color defaultParticleColor = new Color(0.937f, 0.322f, 0.404f); 
+
     void Awake()
     {
         if (Instance == null)
@@ -26,9 +28,9 @@ public class SkinManager : MonoBehaviour
         equippedSkinName = PlayerPrefs.GetString("EquippedSkin", "");
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        float r = PlayerPrefs.GetFloat("ParticleR", 1f);
-        float g = PlayerPrefs.GetFloat("ParticleG", 1f);
-        float b = PlayerPrefs.GetFloat("ParticleB", 1f);
+        float r = PlayerPrefs.GetFloat("ParticleR", defaultParticleColor.r);
+        float g = PlayerPrefs.GetFloat("ParticleG", defaultParticleColor.g);
+        float b = PlayerPrefs.GetFloat("ParticleB", defaultParticleColor.b);
         CurrentParticleColor = new Color(r, g, b);
     }
 
@@ -95,7 +97,6 @@ public class SkinManager : MonoBehaviour
                     Gradient original = trail.colorGradient;
                     GradientColorKey[] colorKeys = original.colorKeys;
 
-                    // reemplazamos solo el color, mantenemos los alphas originales
                     for (int i = 0; i < colorKeys.Length; i++)
                         colorKeys[i].color = item.particleColor;
 
@@ -119,7 +120,7 @@ public class SkinManager : MonoBehaviour
     public void ResetSkins()
     {
         equippedSkinName = "";
-        CurrentParticleColor = Color.white;
+        CurrentParticleColor = defaultParticleColor;
     }
 
     public bool IsSkinOwned(string skinName)
@@ -131,14 +132,15 @@ public class SkinManager : MonoBehaviour
     {
         return equippedSkinName == skinName;
     }
+
     public void UnequipSkin()
     {
         equippedSkinName = "";
-        CurrentParticleColor = Color.white;
+        CurrentParticleColor = defaultParticleColor;
         PlayerPrefs.SetString("EquippedSkin", "");
-        PlayerPrefs.SetFloat("ParticleR", 1f);
-        PlayerPrefs.SetFloat("ParticleG", 1f);
-        PlayerPrefs.SetFloat("ParticleB", 1f);
+        PlayerPrefs.SetFloat("ParticleR", defaultParticleColor.r);
+        PlayerPrefs.SetFloat("ParticleG", defaultParticleColor.g);
+        PlayerPrefs.SetFloat("ParticleB", defaultParticleColor.b);
         PlayerPrefs.Save();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -150,7 +152,7 @@ public class SkinManager : MonoBehaviour
                 Gradient original = trail.colorGradient;
                 GradientColorKey[] colorKeys = original.colorKeys;
                 for (int i = 0; i < colorKeys.Length; i++)
-                    colorKeys[i].color = Color.white;
+                    colorKeys[i].color = defaultParticleColor;
                 Gradient newGradient = new Gradient();
                 newGradient.SetKeys(colorKeys, original.alphaKeys);
                 trail.colorGradient = newGradient;
